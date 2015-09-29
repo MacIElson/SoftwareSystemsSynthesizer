@@ -12,6 +12,7 @@
 */
 
 byte sine[] = {127, 134, 142, 150, 158, 166, 173, 181, 188, 195, 201, 207, 213, 219, 224, 229, 234, 238, 241, 245, 247, 250, 251, 252, 253, 254, 253, 252, 251, 250, 247, 245, 241, 238, 234, 229, 224, 219, 213, 207, 201, 195, 188, 181, 173, 166, 158, 150, 142, 134, 127, 119, 111, 103, 95, 87, 80, 72, 65, 58, 52, 46, 40, 34, 29, 24, 19, 15, 12, 8, 6, 3, 2, 1, 0, 0, 0, 1, 2, 3, 6, 8, 12, 15, 19, 24, 29, 34, 40, 46, 52, 58, 65, 72, 80, 87, 95, 103, 111, 119,};
+//byte sine[] = {0, 255, 255, 0};
 int t = 0;//time
 
 void setup(){
@@ -26,7 +27,7 @@ void setup(){
   TCCR0B = 0;// same for TCCR0B
   TCNT0  = 0;//initialize counter value to 0
   // set compare match register for 40khz increments
-  OCR0A = 49;// = (16*10^6) / (40000*8) - 1 (must be <256)
+  OCR0A = 200;// = (16*10^6) / (40000*8) - 1 (must be <256)
   // turn on CTC mode
   TCCR0A |= (1 << WGM01);
   // Set CS11 bit for 8 prescaler
@@ -37,17 +38,37 @@ void setup(){
   
 }
 
+unsigned long previousMillis = 0;
+unsigned long currentMillis = 0;
 
 ISR(TIMER0_COMPA_vect){ //40kHz interrupt routine
   PORTD = sine[t];//send sine wave to DAC, centered around (127/255)*5 = 2.5V
-  t++;//increment t
-  if (t > 99){//reset t to zero
-    t = 0;
+  t++; // Increment t
+  if (t > 99) t = 0; // Set t to zero at end of sine wave
+  
+  currentMillis = millis();
+  
+  if (currentMillis - previousMillis >= 250) {
+    previousMillis = currentMillis;
+    OCR0A = random(256);
   }
 }
 
+//const int TIMER_FREQ = 2000000;
+//const int LOOKUPS = 100;
+
+//int freqs[] = {200, 770, 1000};
+//int desired_freq;
+//int desired_interrupt_freq;
+
+
 void loop(){
-  //do other stuff here
+//  desired_freq = random(20, 1000);
+//  desired_interrupt_freq = LOOKUPS * desired_freq;
+//  OCR0A = (TIMER_FREQ / desired_interrupt_freq) - 1;
+  
+
 }
+
 
 

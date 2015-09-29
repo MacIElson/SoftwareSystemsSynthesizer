@@ -1,6 +1,6 @@
 CLOCK_FREQ = 16000000
 PRESCALER = 8
-OCR0A = 99
+OCR0A = 252
 LOOKUPS = 100
 
 # What freq should the arduino be outputting based on current settings
@@ -11,7 +11,7 @@ sound_frequency = interrupt_frequency / LOOKUPS
 print("Sound frequency: " + str(sound_frequency))
 
 
-# # How should we set 
+# # How should we set
 # DESIRED_SOUND_FREQ = 200
 # desired_interrupt_freq = LOOKUPS * sound_frequency
 # desired_OCR0A = (timer_freq / desired_interrupt_freq) - 1
