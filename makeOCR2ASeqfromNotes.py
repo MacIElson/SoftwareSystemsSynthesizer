@@ -10,7 +10,11 @@ to a list of OCR2A settings to be inputted to the Arduino synthesizer
 # Range D2#-C7# (77.8 - 2217.5), OCR0A Range 78 - 2222 (Rounded)
 # F6# begins mapping to same freq - top of effective range
 test_seq = ["A4", "B4", "C4"]
-test_seq1 = ["A4", "B4", "C4"]
+test_song1 = {
+  "notes": [("C4",1.0),("C4#",1.0),("D4",1.0),("D4#",1.0),("E4",1.0),("F4",1.0),("F4#",1.0),("G4",1.0),("G4#",1.0),("A4",1.0),("A4#",1.0),("B4",1.0)],
+  "tempo": 1000 #ms
+  }
+
 mario_song = []
 
 # Constant Declarations
@@ -21,6 +25,8 @@ LOOKUPS = 100
 
 # Map from Notes to Frequencies
 note_map = {
+  "silent": 0,
+
   "C3" : 130.81,
   "C3#": 138.59,
   "D3b": 138.59,
@@ -84,7 +90,7 @@ note_map = {
   "E6" : 1318.5,
   "F6" : 1386.9,
   "F6#": 1480.0,
-  "D6b": 1480.0
+  "G6b": 1480.0
 }
 
 
@@ -97,9 +103,13 @@ def noteToOCR2A(note):
 	""" Maps from a note's name to a comparison register setting """
 	return int(round(freqToOCR2A(note_map[note])))
 
-def noteSeqToOCR2ASeq(sequence):
+def noteSeqToOCR2ASeq(song):
 	""" Maps from a list of note names to a list of comparison register settings """
-	return [noteToOCR2A(note) for note in sequence]
+	return [ 256 if (note[0] == "silent") else noteToOCR2A(note[0]) for note in song["notes"]]
+
+def noteDurations(song):
+  return [int(round(note[1] * song["tempo"])) for note in song["notes"]]
 
 if __name__ == "__main__":
-	print(noteSeqToOCR2ASeq(test_seq))
+  print "int notes[] = {" + ",".join(str(x) for x in noteSeqToOCR2ASeq(test_song1)) + "};"
+  print "int durations[] = {" + ",".join(str(x) for x in noteDurations(test_song1)) + "};"
