@@ -152,7 +152,8 @@ def noteSeqToOCR2ASeq(song):
 	return [ 256 if (note[0] == "silent") else noteToOCR2A(note[0]) for note in song["notes"]]
 
 def noteDurations(song):
-  return [int(round(note[1] * song["tempo"])) for note in song["notes"]]
+	""" Maps from a list of relative note lengths to a list of note lengths in milliseconds"""
+  	return [int(round(note[1] * song["tempo"])) for note in song["notes"]]
 
 if __name__ == "__main__":
   print "int notes[] = {" + ",".join(str(x) for x in noteSeqToOCR2ASeq(fzero)) + "};"
